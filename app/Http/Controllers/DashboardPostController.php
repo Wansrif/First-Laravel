@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
 use App\Models\Category;
-use Illuminate\Support\Str;
+use App\Models\Post;
+use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use \Cviebrock\EloquentSluggable\Services\SlugService;
+use Illuminate\Support\Str;
 
 class DashboardPostController extends Controller
 {
@@ -19,7 +19,7 @@ class DashboardPostController extends Controller
     public function index()
     {
         return view('dashboard.posts.index', [
-            'posts' => Post::where('user_id', auth()->user()->id)->get()
+            'posts' => Post::where('user_id', auth()->user()->id)->get(),
         ]);
     }
 
@@ -31,7 +31,7 @@ class DashboardPostController extends Controller
     public function create()
     {
         return view('dashboard.posts.create', [
-            'categories'    => Category::all()->sortBy('name')
+            'categories' => Category::all()->sortBy('name'),
         ]);
     }
 
@@ -44,11 +44,11 @@ class DashboardPostController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'         => 'required|max:255',
-            'slug'          => 'required|unique:posts',
-            'category_id'   => 'required',
-            'image'         => 'image|file|max:1024',
-            'body'          => 'required'
+            'title' => 'required|max:255',
+            'slug' => 'required|unique:posts',
+            'category_id' => 'required',
+            'image' => 'image|file|max:1024',
+            'body' => 'required',
         ]);
 
         if ($request->file('image')) {
@@ -72,7 +72,7 @@ class DashboardPostController extends Controller
     public function show(Post $post)
     {
         return view('dashboard.posts.show', [
-            'post'  => $post
+            'post' => $post,
         ]);
     }
 
@@ -85,8 +85,8 @@ class DashboardPostController extends Controller
     public function edit(Post $post)
     {
         return view('dashboard.posts.edit', [
-            'post'          => $post,
-            'categories'    => Category::all()->sortBy('name')
+            'post' => $post,
+            'categories' => Category::all()->sortBy('name'),
         ]);
     }
 
@@ -100,10 +100,10 @@ class DashboardPostController extends Controller
     public function update(Request $request, Post $post)
     {
         $rules = [
-            'title'         => 'required|max:255',
-            'category_id'   => 'required',
-            'image'         => 'image|file|max:1024',
-            'body'          => 'required'
+            'title' => 'required|max:255',
+            'category_id' => 'required',
+            'image' => 'image|file|max:1024',
+            'body' => 'required',
         ];
 
         if ($request->slug != $post->slug) {
@@ -113,7 +113,7 @@ class DashboardPostController extends Controller
         $validated = $request->validate($rules);
 
         if ($request->file('image')) {
-            if($request->oldImage) {
+            if ($request->oldImage) {
                 Storage::delete($request->oldImage);
             }
             $validated['image'] = $request->file('image')->store('post-images');
@@ -136,16 +136,18 @@ class DashboardPostController extends Controller
      */
     public function destroy(Post $post)
     {
-        if($post->image) {
+        if ($post->image) {
             Storage::delete($post->image);
         }
         Post::destroy($post->id);
+
         return redirect('/dashboard/posts')->with('success', 'Post has been deleted!');
     }
 
     public function checkSlug(Request $request)
     {
         $slug = SlugService::createSlug(Post::class, 'slug', $request->title);
+
         return response()->json(['slug' => Str::limit($slug, 40, '')]);
     }
 }

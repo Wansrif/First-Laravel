@@ -1,12 +1,12 @@
 <?php
 
 use App\Http\Controllers\AdminCategoryController;
+use App\Http\Controllers\DashboardPostController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\RegisterController;
 use App\Models\Category;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\DashboardPostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ Route::get('/', function () {
 Route::get('/about', function () {
     return view('about', [
         'title' => 'About',
-        'nama'  => 'Redwan Sarif',
+        'nama' => 'Redwan Sarif',
         'email' => 'ridwansyarif23@gmail.com',
         'image' => 'goat.jpg',
     ]);
@@ -39,10 +39,10 @@ Route::controller(PostController::class)->group(function () {
     Route::get('posts/{post:slug}', 'show');
 });
 
-Route::get('/categories', function() {
+Route::get('/categories', function () {
     return view('categories', [
-        'title'         => 'Post Categories',
-        'categories'    => Category::all(),
+        'title' => 'Post Categories',
+        'categories' => Category::all(),
     ]);
 });
 
@@ -57,7 +57,7 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'store');
 });
 
-Route::get('/dashboard', function() {
+Route::get('/dashboard', function () {
     return view('dashboard.index');
 })->middleware('auth');
 

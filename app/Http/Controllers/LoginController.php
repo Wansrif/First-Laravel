@@ -10,16 +10,16 @@ class LoginController extends Controller
     public function index()
     {
         return view('login.index', [
-            'title'     => 'Login',
-            'active'    => 'login'
+            'title' => 'Login',
+            'active' => 'login',
         ]);
     }
 
     public function authenticate(Request $request)
     {
         $credentials = $request->validate([
-            'email'     => 'required|email',
-            'password'  => 'required'
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
 
         if (Auth::attempt($credentials)) {
